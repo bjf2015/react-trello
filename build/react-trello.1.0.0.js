@@ -49,44 +49,111 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	
+	var tasks1 = ['Task1', 'Task2', 'Task3'];
+	var tasks2 = ['Task4', 'Task5', 'Task6'];
+	var tasks3 = ['Task7', 'Task8', 'Task9'];
+	
 	var Card = function Card(props) {
 	  return React.createElement(
 	    'div',
-	    null,
+	    { className: 'card' },
 	    props.text
 	  );
 	};
 	
-	var List = function List(props) {
+	//add value in the input tag
+	var AddItem = function AddItem(props) {
 	  return React.createElement(
-	    'div',
-	    null,
+	    'form',
+	    { onSubmit: props.onAddSubmit },
+	    React.createElement('input', { type: 'text', placeholder: 'enter task', onChange: props.onAddInputChanged, value: props.value }),
 	    React.createElement(
-	      'h2',
-	      null,
-	      props.title
-	    ),
-	    React.createElement(Card, { text: 'Task 1' }),
-	    React.createElement(Card, { text: 'Task 2' })
-	  );
-	};
-	var Board = function Board(props) {
-	  return React.createElement(
-	    'div',
-	    null,
-	    React.createElement(
-	      'h1',
-	      null,
-	      props.boardTitle
-	    ),
-	    React.createElement(List, { title: 'List 1' }),
-	    React.createElement(List, { title: 'List 2' }),
-	    React.createElement(List, { title: 'List 3' })
+	      'button',
+	      { type: 'submit' },
+	      'Submit'
+	    )
 	  );
 	};
 	
+	//event.currentTarget
+	var List = React.createClass({
+	  displayName: 'List',
+	  // ListContainer
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      item: '',
+	      listItems: this.props.initialCards
+	    };
+	  },
+	
+	  onAddSubmit: function onAddSubmit(event) {
+	    event.preventDefault();
+	    console.log('button pressed');
+	    // var updatedList = this.state.cards;
+	    // updatedList.push(this.state.item);
+	    this.setState({
+	      item: '',
+	      listItems: this.state.listItems.concat([this.state.item])
+	    });
+	  },
+	
+	  onAddInputChanged: function onAddInputChanged(event) {
+	    event.preventDefault();
+	    console.log(event.target.value);
+	
+	    this.setState({
+	      item: event.target.value
+	
+	    });
+	  },
+	
+	  render: function render(props) {
+	    var myList = [];
+	    for (var i = 0; i < this.state.listItems.length; i++) {
+	      myList.push(React.createElement(Card, { text: this.state.listItems[i] }));
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'card-list' },
+	      React.createElement(
+	        'div',
+	        { className: 'list' },
+	        this.props.title
+	      ),
+	      myList,
+	      React.createElement(AddItem, { onAddSubmit: this.onAddSubmit, onAddInputChanged: this.onAddInputChanged, value: this.state.item })
+	    );
+	  }
+	});
+	
+	var Board = React.createClass({
+	  displayName: 'Board',
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      titles: ["Title1", "Title2", "Title3"],
+	      tasks: [tasks1, tasks2, tasks3]
+	    };
+	  },
+	
+	  //add updatedItems: function()
+	  render: function render() {
+	    var list = [];
+	    for (var i = 0; i < this.state.titles.length; i++) {
+	      list.push(React.createElement(List, { title: this.state.titles[i], initialCards: this.state.tasks[i] }));
+	    };
+	    console.log(list);
+	    return React.createElement(
+	      'div',
+	      { className: 'Board' },
+	      list
+	    );
+	  }
+	});
+	
 	document.addEventListener('DOMContentLoaded', function () {
-	  ReactDOM.render(React.createElement(Board, { boardTitle: 'Hello' }), document.getElementById('app'));
+	  ReactDOM.render(React.createElement(Board, null), document.getElementById('app'));
 	});
 
 /***/ },
